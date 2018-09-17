@@ -3,7 +3,7 @@ a sample python destination for syslog-ng
 
 ## sample config
 
-'''
+```
 destination d_python_to_file {
     python(
         class("mqtt_dest.MqttDestination")
@@ -22,4 +22,4 @@ log {
     source(s_sys);
     destination(d_python_to_file);
 };
-'''
+```
