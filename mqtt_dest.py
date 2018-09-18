@@ -13,6 +13,16 @@ class MqttDestination(object):
     the MqttDestination class, reference this from syslog-ng.conf
     """
 
+    def __init__(self):
+        """initializing variables with default values"""
+        self.host = None
+        self.port = None
+        self.topic = None
+        self._is_opened = False
+        self.debug = 0
+        self.qos = 0
+        self.mqttc = mqtt.Client("sng_mqtt")
+
     def printdebug(self, msg):
         """prints debug message if debug is enabled"""
         if self.debug > 0:
@@ -23,13 +33,6 @@ class MqttDestination(object):
         initializing MQTT parameters, fails if mandatory parameters
         are not available, or not in the right format
         """
-        self.host = None
-        self.port = None
-        self.topic = None
-        self._is_opened = False
-        self.debug = 0
-        self.qos = 0
-        self.mqttc = mqtt.Client("sng_mqtt")
         try:
             print('MQTT destination options: ' + str(options))
             self.host = options["host"]
@@ -39,12 +42,14 @@ class MqttDestination(object):
                 self.debug = int(options["debug"])
             if "qos" in options:
                 self.qos = int(options["qos"])
-        except:
+        except Exception as err:
+            print(err)
             print('MQTT destination: exiting in init()...')
             return False
         return True
 
     def is_opened(self):
+        """Check if destination is available"""
         return self._is_opened
 
     def open(self):
@@ -56,8 +61,9 @@ class MqttDestination(object):
             self.mqttc.loop_start()
             self._is_opened = True
             self.printdebug('MQTT destination: opened...')
-        except:
-            self.printdebug('MQTT destination: opening ' + self.host + ' at ' + str(self.port) + 'failed...')
+        except Exception as err:
+            print(err)
+            self.printdebug('MQTT destination: opening ' + self.host + ' at ' + str(self.port) + ' failed...')
             self._is_opened = False
             return False
         return True
@@ -83,9 +89,10 @@ class MqttDestination(object):
             self.printdebug('MQTT destination: before sending')
             self.mqttc.publish(self.topic, decoded_msg, qos=self.qos)
             self.printdebug('MQTT destination: after sending')
-        except:
+        except Exception as err:
+            print(err)
             self.printdebug('MQTT destination: sending to topic ' + self.topic + ' failed...')
-            self._is_opened = False            
+            self._is_opened = False
             return False
         return True
 
