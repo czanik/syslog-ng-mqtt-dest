@@ -1,6 +1,8 @@
 # syslog-ng-mqtt-dest
 a sample python destination for syslog-ng
 
+Read https://www.syslog-ng.com/community/b/blog/posts/python-destination-getting-into-details to learn more about the Python destination of syslog-ng.
+
 ## sample config
 
 ```
